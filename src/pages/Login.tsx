@@ -1,13 +1,13 @@
-
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Lock, Mail, Eye, EyeOff, User, AlertCircle, Shield } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/lib/supabase';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -15,10 +15,11 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  
-  const handleSubmit = (e: React.FormEvent) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       toast({
         title: "Error",
@@ -27,24 +28,87 @@ const Login = () => {
       });
       return;
     }
-    
-    // Simulating login processing
+
     setLoading(true);
+
+    // 1. Sign in the user
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    setLoading(false);
+
+    if (error) {
+      toast({
+        title: "Login failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    } 
+
+    // 2. Check email confirmation
+    if (data.user && !data.user.email_confirmed_at) {
+      toast({
+        title: "Email Not Confirmed",
+        description: "Please check your inbox and confirm your email before logging in.",
+        variant: "destructive",
+      });
+      return;
+    }
     
-    setTimeout(() => {
-      setLoading(false);
+    // 3. If we have a valid user, fetch the role from 'profiles' table
+    if (data.user) {
       toast({
         title: "Success",
         description: "You have successfully logged in",
       });
-      // In a real app, redirect to dashboard after login
-    }, 1500);
+
+      // Optionally, if you store the role in user_metadata or app_metadata:
+      // const role = data.user.user_metadata?.role || data.user.app_metadata?.role;
+      // if (role === "staff") { ... }
+
+      // Otherwise, fetch from 'profiles'
+      try {
+        // Adjust column names as needed: user_id might be the PK or foreign key
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", data.user.id) // or eq("id", data.user.id) if your PK is named 'id'
+          .single();
+
+        if (profileError) {
+          // Fallback or handle error
+          console.error("Profile fetch error:", profileError);
+          toast({
+            title: "Error",
+            description: "Could not fetch user profile. Defaulting to customer.",
+            variant: "destructive",
+          });
+          navigate("/dashboard");
+          return;
+        }
+
+        const role = profile?.role; // e.g., 'staff' or 'customer'
+        console.log("Fetched role from profiles table:", role);
+
+        if (role === "bank_staff") {
+          navigate("/dashboard/staff");
+        } else {
+          navigate("/dashboard");
+        }
+      } catch (err) {
+        console.error("Error fetching role from profiles:", err);
+        navigate("/dashboard"); // default
+      }
+    }
   };
-  
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
-      
+
       <div className="flex-grow flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
@@ -56,7 +120,7 @@ const Login = () => {
               Sign in to access your loan account
             </p>
           </div>
-          
+
           <Card>
             <CardContent className="p-6">
               <form className="space-y-6" onSubmit={handleSubmit}>
@@ -106,7 +170,7 @@ const Login = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
-                    <div 
+                    <div
                       className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
                       onClick={() => setShowPassword(!showPassword)}
                     >
@@ -119,14 +183,14 @@ const Login = () => {
                   </div>
                 </div>
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full bg-bank-blue hover:bg-bank-navy"
                   disabled={loading}
                 >
                   {loading ? "Signing in..." : "Sign in"}
                 </Button>
-                
+
                 <div className="flex items-center justify-center">
                   <span className="text-sm">
                     Don't have an account?{" "}
@@ -138,14 +202,14 @@ const Login = () => {
               </form>
             </CardContent>
           </Card>
-          
+
           <div className="flex items-center text-xs text-gray-500 justify-center space-x-2">
             <Lock className="h-3 w-3" />
             <span>Secured with bank-level encryption</span>
           </div>
         </div>
       </div>
-      
+
       <Footer />
     </div>
   );

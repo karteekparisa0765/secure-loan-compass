@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -9,10 +8,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 
 const Calculator = () => {
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
-      
+
       <div className="bg-bank-navy py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center justify-center p-2 bg-white/10 rounded-full mb-4">
@@ -24,14 +24,14 @@ const Calculator = () => {
           </p>
         </div>
       </div>
-      
+
       <div className="flex-grow bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <LoanCalculator />
-          
+
           <div className="mt-16">
             <h2 className="text-2xl font-bold text-bank-navy mb-6 text-center">Understanding Your EMI Calculation</h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
                 <h3 className="text-xl font-semibold text-bank-navy mb-4">How EMI is Calculated</h3>
@@ -51,7 +51,7 @@ const Calculator = () => {
                   n = Loan tenure in months
                 </p>
               </div>
-              
+
               <div>
                 <h3 className="text-xl font-semibold text-bank-navy mb-4">Tips for Loan Planning</h3>
                 <ul className="space-y-3 text-gray-600">
@@ -79,72 +79,38 @@ const Calculator = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="mt-16">
             <h2 className="text-2xl font-bold text-bank-navy mb-6 text-center">Ready to Apply?</h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex justify-center mb-4">
-                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                      <FileText className="h-6 w-6 text-bank-blue" />
+              {[
+                { title: 'Personal Loan', desc: 'Quick funds for your personal needs with minimal documentation.', path: '/loans/personal' },
+                { title: 'Home Loan', desc: 'Affordable financing solutions for your dream home.', path: '/loans/home' },
+                { title: 'Business Loan', desc: 'Grow your business with our flexible financing options.', path: '/loans/business' },
+              ].map((loan, index) => (
+                <Card key={index}>
+                  <CardContent className="p-6">
+                    <div className="flex justify-center mb-4">
+                      <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                        <FileText className="h-6 w-6 text-bank-blue" />
+                      </div>
                     </div>
-                  </div>
-                  <h3 className="text-xl font-semibold text-bank-navy mb-2 text-center">Personal Loan</h3>
-                  <p className="text-gray-600 text-center mb-4">
-                    Quick funds for your personal needs with minimal documentation.
-                  </p>
-                  <Button asChild className="w-full bg-bank-blue hover:bg-bank-navy">
-                    <Link to="/loans/personal" className="flex items-center justify-center">
-                      Apply Now <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex justify-center mb-4">
-                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                      <FileText className="h-6 w-6 text-bank-blue" />
-                    </div>
-                  </div>
-                  <h3 className="text-xl font-semibold text-bank-navy mb-2 text-center">Home Loan</h3>
-                  <p className="text-gray-600 text-center mb-4">
-                    Affordable financing solutions for your dream home.
-                  </p>
-                  <Button asChild className="w-full bg-bank-blue hover:bg-bank-navy">
-                    <Link to="/loans/home" className="flex items-center justify-center">
-                      Apply Now <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex justify-center mb-4">
-                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                      <FileText className="h-6 w-6 text-bank-blue" />
-                    </div>
-                  </div>
-                  <h3 className="text-xl font-semibold text-bank-navy mb-2 text-center">Business Loan</h3>
-                  <p className="text-gray-600 text-center mb-4">
-                    Grow your business with our flexible financing options.
-                  </p>
-                  <Button asChild className="w-full bg-bank-blue hover:bg-bank-navy">
-                    <Link to="/loans/business" className="flex items-center justify-center">
-                      Apply Now <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
+                    <h3 className="text-xl font-semibold text-bank-navy mb-2 text-center">{loan.title}</h3>
+                    <p className="text-gray-600 text-center mb-4">{loan.desc}</p>
+                    <Button asChild className="w-full bg-bank-blue hover:bg-bank-navy">
+                      <Link to={loan.path} className="flex items-center justify-center">
+                        Apply Now <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         </div>
       </div>
-      
+
       <Footer />
     </div>
   );

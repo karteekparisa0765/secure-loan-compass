@@ -36,9 +36,6 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="text-gray-300 hover:text-white">Home</Link>
-              </li>
-              <li>
                 <Link to="/about" className="text-gray-300 hover:text-white">About Us</Link>
               </li>
               <li>
@@ -58,9 +55,6 @@ const Footer = () => {
               </li>
               <li>
                 <Link to="/loans/business" className="text-gray-300 hover:text-white">Business Loans</Link>
-              </li>
-              <li>
-                <Link to="/loans/home" className="text-gray-300 hover:text-white">Home Loans</Link>
               </li>
               <li>
                 <Link to="/loans/auto" className="text-gray-300 hover:text-white">Auto Loans</Link>
