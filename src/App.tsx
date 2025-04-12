@@ -15,6 +15,8 @@ import LoanApplication from "./pages/LoanApplication";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
 import MakePayment from "./pages/MakePayment"; // New import for Make Payment page
+import ForgotPassword from "./pages/ForgotPassword"; // Import ForgotPassword component
+import ResetPassword from "./pages/ResetPassword"; // Import ResetPassword component
 
 const queryClient = new QueryClient();
 
@@ -32,6 +34,8 @@ const App = () => (
           <Route path="/dashboard/staff" element={<BankStaffDashboard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} /> {/* Added Forgot Password route */}
+          <Route path="/reset-password" element={<ResetPassword />} /> {/* Added Reset Password route */}
           <Route path="/dashboard/staff/reports" element={<StaffReports />} />
           <Route path="/loans/:type" element={<LoanApplication />} />
           <Route path="/loans/apply" element={<LoanApplication />} />

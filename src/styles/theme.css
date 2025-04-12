@@ -1,0 +1,53 @@
+:root[data-theme="light"] {
+  --background-primary: #ffffff;
+  --background-secondary: #f8f9fa;
+  --text-primary: #333333;
+  --text-secondary: #6c757d;
+  --accent-color: #0066cc;
+  --border-color: #dee2e6;
+  --card-background: #ffffff;
+  --input-background: #ffffff;
+  --input-border: #ced4da;
+  --error-color: #dc3545;
+  --success-color: #198754;
+}
+
+:root[data-theme="dark"] {
+  --background-primary: #1a1a1a;
+  --background-secondary: #2d2d2d;
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --accent-color: #4d94ff;
+  --border-color: #404040;
+  --card-background: #2d2d2d;
+  --input-background: #333333;
+  --input-border: #404040;
+  --error-color: #ff4d4d;
+  --success-color: #2eb85c;
+}
+
+body {
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+input, select, textarea {
+  background-color: var(--input-background);
+  border-color: var(--input-border);
+  color: var(--text-primary);
+}
+
+.card {
+  background-color: var(--card-background);
+  border-color: var(--border-color);
+}
+
+button {
+  background-color: var(--accent-color);
+  color: var(--text-primary);
+}
+
+a {
+  color: var(--accent-color);
+}
