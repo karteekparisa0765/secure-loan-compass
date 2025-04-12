@@ -47,7 +47,7 @@ interface Profile {
 
 interface Loan {
   id: string;
-  profile_id: string; // Updated foreign key
+  user_id: string;
   loan_amount: number;
   loan_term: number;
   loan_purpose: string;
@@ -56,6 +56,17 @@ interface Loan {
   status: string;
   submitted_at: string;
   rejection_reason?: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  address: string;
+  employer_name: string;
+  years_employed: number;
+  loan_type: string;
+  paid_amount: number;
+  next_payment_due: string;
+  is_late: boolean;
   profiles?: Profile;
 }
 
@@ -200,21 +211,32 @@ const BankStaffDashboard = () => {
         return;
       }
 
-      // Note: Updated join from profiles:user_id to profiles:profile_id according to the new foreign key.
+      // Get loan applications with their built-in profile fields
       const { data, error } = await supabase
         .from("loan_applications")
-        .select(
-          `
-          *,
-          profiles:profile_id (
-            first_name,
-            last_name,
-            email,
-            address,
-            bank_balance
-          )
-          `
-        )
+        .select(`
+          id,
+          user_id,
+          loan_amount,
+          loan_term,
+          loan_purpose,
+          first_name,
+          last_name,
+          email,
+          phone,
+          address,
+          employment_status,
+          employer_name,
+          monthly_income,
+          years_employed,
+          loan_type,
+          submitted_at,
+          status,
+          paid_amount,
+          next_payment_due,
+          is_late,
+          rejection_reason
+        `)
         .order("submitted_at", { ascending: false });
 
       if (error) {
@@ -228,17 +250,16 @@ const BankStaffDashboard = () => {
         return;
       }
 
-      // Ensure the profiles object exists and contains defaults if necessary
+      // Transform the data to match the expected structure
       const transformedLoans = data.map((loan: any) => ({
         ...loan,
         profiles: {
-          ...loan.profiles,
-          first_name: loan.profiles?.first_name || "Unknown",
-          last_name: loan.profiles?.last_name || "User",
-          email: loan.profiles?.email || "",
-          phone: loan.profiles?.phone || "",
-          address: loan.profiles?.address || "",
-          bank_balance: loan.profiles?.bank_balance || 0,
+          first_name: loan.first_name || "Unknown",
+          last_name: loan.last_name || "User",
+          email: loan.email || "",
+          phone: loan.phone || "",
+          address: loan.address || "",
+          bank_balance: 0, // This field might need to be fetched separately if needed
         },
       }));
 
@@ -328,7 +349,7 @@ const BankStaffDashboard = () => {
 
   useEffect(() => {
     if (selectedLoan) {
-      fetchCibilScore(selectedLoan.profile_id);
+      fetchCibilScore(selectedLoan.user_id);
     } else {
       setCibilScore(null);
     }
